@@ -7,6 +7,21 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+:root {
+  --bg-dots: radial-gradient(#e5e7eb 1px, transparent 1px);
+  --bg-color: #fafafa;
+}
+
+/* Fallback when dark class is applied to any parent */
+.dark, :root:has(.dark), body:has(.dark) {
+  --bg-dots: radial-gradient(#1e293b 1px, transparent 1px);
+  --bg-color: #0b0f19;
+}
+
 body {
   font-family: var(--font-sans);
+  background-color: var(--bg-color);
+  background-image: var(--bg-dots);
+  background-size: 24px 24px;
+  transition: background-color 0.25s, background-image 0.25s;
 }
