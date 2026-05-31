@@ -90,33 +90,62 @@ export default function App() {
       </header>
 
       <main className="flex-1 bg-white overflow-y-auto relative py-12">
-        <div className="max-w-4xl mx-auto px-6 w-full">
-          {!plan && (
-            <div className="mb-10 border-l-4 border-indigo-500 pl-6">
-              <span className="text-[10px] text-indigo-500 font-mono tracking-widest uppercase">System Initialization</span>
-              <h2 className="text-4xl font-light text-slate-800 mt-2">Topical Authority Engine</h2>
-              <p className="text-slate-400 mt-4 text-xs font-medium uppercase tracking-tight">
-                Generate a fully mapped, internally-linked SEO content cluster.
+        <div className="mx-auto w-full max-w-7xl">
+          {!plan && !loadingStep && (
+             <div className="grid lg:grid-cols-2 gap-12 items-center mb-12 max-w-6xl mx-auto">
+                <div className="order-2 lg:order-1">
+                  <div className="mb-10 border-l-4 border-indigo-500 pl-6">
+                    <span className="text-[10px] text-indigo-500 font-mono tracking-widest uppercase">System Initialization</span>
+                    <h2 className="text-4xl sm:text-5xl font-light text-slate-800 mt-2 tracking-tight mb-4">Topical<br className="hidden sm:block" /> Authority Engine</h2>
+                    <p className="text-slate-500 mt-4 text-xs sm:text-sm max-w-md leading-relaxed">
+                      Deploy a fully mapped, internally-linked SEO content cluster. Enter your business details below to orchestrate your AI content strategy.
+                    </p>
+                  </div>
+                  <BusinessForm onSubmit={startGeneration} isLoading={!!loadingStep} />
+                </div>
+                <div className="order-1 lg:order-2 hidden md:block">
+                  <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-2xl relative aspect-[4/5] lg:aspect-square group">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent z-10"></div>
+                    <img 
+                      src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" 
+                      alt="Modern office architecture" 
+                      className="object-cover w-full h-full transform transition-transform duration-1000 group-hover:scale-105"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute bottom-8 left-8 right-8 z-20">
+                      <div className="bg-white/95 backdrop-blur-sm p-6 rounded-xl border border-white/20 shadow-xl flex items-center gap-4 transition-transform duration-500 group-hover:-translate-y-2">
+                        <div className="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center shrink-0">
+                           <LayoutDashboard className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <div>
+                           <p className="text-xs font-bold text-slate-900 uppercase tracking-widest">Semantic Clusters</p>
+                           <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider">Automated Internal Linking Matrix</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+             </div>
+          )}
+
+          {loadingStep && (
+            <div className="max-w-2xl mx-auto mt-16 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-xl p-8 text-center bg-slate-50 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-indigo-100"><div className="h-1 bg-indigo-500 animate-pulse"></div></div>
+              <div className="w-10 h-10 bg-white rounded-full border border-slate-200 flex items-center justify-center mb-6 shadow-sm animate-pulse">
+                <DatabaseZap className="w-5 h-5 text-indigo-500" />
+              </div>
+              <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-3">Analysis Active</p>
+              <div className="text-xs font-bold text-indigo-600 bg-white border border-indigo-100 px-6 py-3 rounded shadow-sm">
+                {loadingStep}
+              </div>
+              <p className="text-[10px] text-slate-400 mt-6 max-w-sm uppercase tracking-wider leading-relaxed">
+                Assembling topical map and generating structural hierarchy...
               </p>
             </div>
           )}
 
-          <BusinessForm onSubmit={startGeneration} isLoading={!!loadingStep} />
-
-          {loadingStep && (
-            <div className="mt-16 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-xl p-8 text-center bg-slate-50">
-              <div className="w-8 h-8 bg-white rounded-full border border-slate-200 flex items-center justify-center mb-4 shadow-sm animate-pulse">
-                <DatabaseZap className="w-4 h-4 text-indigo-500" />
-              </div>
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-2">Analysis Active</p>
-              <div className="text-xs font-bold text-indigo-600 bg-white border border-indigo-100 px-4 py-2 rounded shadow-sm">
-                {loadingStep}
-              </div>
-            </div>
-          )}
-
           {plan && !loadingStep && (
-            <div className="mt-16">
+            <div className="max-w-4xl mx-auto mt-12 mb-24">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 border-b border-slate-200 pb-4">
                  <div className="flex items-center gap-3">
                    <div className="bg-indigo-50 p-2 rounded text-indigo-600">
