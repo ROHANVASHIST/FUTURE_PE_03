@@ -57,23 +57,26 @@ export default function App() {
       if (!pillarRes.ok) throw new Error(await pillarRes.text());
       setPillarBlog(await pillarRes.json());
 
-      // Generate 1 supporting blog for demo to avoid waiting too long
-      const generatedSupports = [];
-      const firstSupporting = planData.cluster.supporting[0];
-      if (firstSupporting) {
-         setLoadingStep(`Generating Support Blog: ${firstSupporting.title.substring(0,25)}...`);
-         const suppRes = await fetch("/api/seo/generate-blog", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              input,
-              blogPlan: firstSupporting,
-              isPillar: false,
-              linkMap: planData.internal_link_map
-            }),
-         });
-         if (suppRes.ok) generatedSupports.push(await suppRes.json());
-      }
+      // Generate all planned supporting blogs concurrently for a complete portfolio!
+      setLoadingStep("Generating All Supporting Sub-Blogs concurrently...");
+      const supportPromises = planData.cluster.supporting.map((supp: any, idx: number) => {
+        return fetch("/api/seo/generate-blog", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            input,
+            blogPlan: supp,
+            isPillar: false,
+            linkMap: planData.internal_link_map
+          }),
+        }).then(async (res) => {
+          if (!res.ok) {
+            throw new Error(`Failed to generate supporting blog "${supp.title}": ${await res.text()}`);
+          }
+          return res.json();
+        });
+      });
+      const generatedSupports = await Promise.all(supportPromises);
       setSupportingBlogs(generatedSupports);
     } catch (err: any) {
       alert("Error: " + err.message);
