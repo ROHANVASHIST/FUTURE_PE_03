@@ -5,6 +5,9 @@ export interface BusinessInput {
   area: string;
   services: string;
   primaryKeyword: string;
+  toneOfVoice?: string;
+  intendedAudience?: string;
+  contentDepth?: string;
 }
 
 export interface ClusterPlan {

@@ -84,13 +84,3 @@ Produces fully structured packages matching:
 1. **Semantic Topic Matrix** detailing target query clusters & contextual user intents.
 2. **Contextual Anchors Reference Schema** illustrating absolute origin and target pages with appropriate anchors.
 3. **Pillar Articles and Supporting Page Contents** compiled into readable flat documentation blocks.
-
-
-
-
-
-<img width="1040" height="873" alt="Screenshot 2026-05-31 060225" src="https://github.com/user-attachments/assets/0b084879-d5ef-4239-82cf-ab9d8023c433" />
-<img width="837" height="873" alt="Screenshot 2026-05-31 055955" src="https://github.com/user-attachments/assets/3de8524a-a3d6-499e-9780-173850967387" />
-<img width="853" height="872" alt="Screenshot 2026-05-31 055938" src="https://github.com/user-attachments/assets/4831089c-46ab-488e-80bf-772cd8d860c1" />
-<img width="1014" height="868" alt="Screenshot 2026-05-31 055922" src="https://github.com/user-attachments/assets/657b84e5-157f-406a-8114-f0e01f354f9a" />
-

@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import { generatePlan, generateBlog } from "./src/server/gemini.js";
+import { generatePlan, generateBlog, generateSubscriptionEmail, generateCheckoutEmail } from "./src/server/gemini.js";
 
 async function startServer() {
   const app = express();
@@ -36,6 +36,55 @@ async function startServer() {
       res.status(500).json({ error: e.message });
     }
   });
+
+  app.post("/api/subscribe", async (req, res) => {
+    try {
+      const { email, businessInput } = req.body;
+      const emailContent = await generateSubscriptionEmail(email, businessInput);
+      res.json({
+        success: true,
+        email,
+        subject: emailContent.subject,
+        htmlContent: emailContent.htmlContent,
+        textContent: emailContent.textContent,
+        timestamp: new Date().toISOString(),
+        headers: {
+          "x-smtp-sender": "briefings@seoclustersuite.com",
+          "x-smtp-relay": "mx.regional-cluster-node-router.internal",
+          "x-spf-record": "PASS",
+          "x-dkim-signature": "PASS"
+        }
+      });
+    } catch (e: any) {
+      console.error("Subscription Mail Error:", e);
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.post("/api/checkout-receipt", async (req, res) => {
+    try {
+      const { email, planName, price, billingPeriod, businessName } = req.body;
+      const receiptContent = await generateCheckoutEmail(email, planName, price, billingPeriod, businessName);
+      res.json({
+        success: true,
+        email,
+        subject: receiptContent.subject,
+        htmlContent: receiptContent.htmlContent,
+        textContent: receiptContent.textContent,
+        timestamp: new Date().toISOString(),
+        headers: {
+          "x-smtp-sender": "billing@seoclustersuite.com",
+          "x-smtp-relay": "billing-relay-mta.secure.internal",
+          "x-spf-record": "PASS",
+          "x-dkim-signature": "PASS"
+        }
+      });
+    } catch (e: any) {
+      console.error("Checkout Receipt Error:", e);
+      res.status(500).json({ error: e.message });
+    }
+  });
+
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {

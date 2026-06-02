@@ -41,6 +41,9 @@ export interface BusinessInput {
   area: string;
   services: string;
   primaryKeyword: string;
+  toneOfVoice?: string;
+  intendedAudience?: string;
+  contentDepth?: string;
 }
 
 const ClusterPlanSchema: Schema = {
@@ -133,6 +136,9 @@ BUSINESS:
 - Area: ${input.area}
 - Services: ${input.services}
 - Primary Keyword: ${input.primaryKeyword}
+- Preferred Tone: ${input.toneOfVoice || "Expert/Educational"}
+- Intended Audience Persona: ${input.intendedAudience || "General Local Customers"}
+- Depth Setting: ${input.contentDepth || "Standard"}
 
 Requirement: Return a JSON object with:
 1. keywordMap (primary, secondary, long_tail, faq_keywords)
@@ -164,6 +170,11 @@ export async function generateBlog(input: BusinessInput, blogPlan: any, isPillar
 Write a complete long-form SEO ${isPillar ? 'pillar' : 'supporting'} blog for this local business.
 
 BUSINESS: ${input.businessName}, ${input.area}, ${input.city}
+PREMIUM STRATEGY PARAMETERS:
+- Tone of Voice: ${input.toneOfVoice || "Expert/Educational"}
+- Target Audience Focus: ${input.intendedAudience || "General Local Customers"}
+- Word Count Objective: Approximately ${input.contentDepth === "Comprehensive" ? "1800" : input.contentDepth === "Short" ? "800" : "1200"} words.
+
 BLOG PLAN: ${JSON.stringify(blogPlan)}
 INTERNAL LINKS YOU MUST INCLUDE: ${JSON.stringify(outboundLinks)}
 
@@ -175,7 +186,6 @@ STRUCTURE REQUIREMENTS:
 - Conclude with an H2 CTA section pointing to clinic contact.
 
 CONTENT REQUIREMENTS:
-- Target word count: roughly ${blogPlan.word_count_target}.
 - Use local keywords (e.g. ${input.city} + service) naturally every few paragraphs.
 - Inject the outbound links into the prose exactly matching the requested anchor text to link to the other blogs. Example format: [anchor text](/blog/slug).
 - E-E-A-T signals: include specific details, procedure steps, realism.
@@ -198,3 +208,74 @@ Return a JSON object containing meta data and a 'markdownContent' string with th
   if (!text) throw new Error("No response returned from Gemini.");
   return JSON.parse(text);
 }
+
+const EmailSchema: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    subject: { type: Type.STRING },
+    htmlContent: { type: Type.STRING, description: "Beautiful, styled HTML email body containing professional modern template design with CSS, tables, list items, and spacing." },
+    textContent: { type: Type.STRING }
+  }
+};
+
+export async function generateSubscriptionEmail(email: string, businessInput: any | null) {
+  let prompt = `Write an extremely professional, premium marketing welcome email from the expert team at "SEO Cluster Mapping Suite" to "${email}".`;
+  if (businessInput && businessInput.businessName) {
+    prompt += ` Custom-tailor the content to their specific local business:
+    - Name: ${businessInput.businessName}
+    - Type: ${businessInput.businessType}
+    - City/Area: ${businessInput.area}, ${businessInput.city}
+    - Primary Keyword Focus: ${businessInput.primaryKeyword}
+    - Core Services: ${businessInput.services}
+    
+    Give them a personalized, strategic regional plan explaining why high-density topical mapping of ${businessInput.primaryKeyword} will capture regional visibility in ${businessInput.city}. Use professional headings (H2, H3), lists, and neat aesthetic formatting in the email. Raise enthusiasm for their newly calculated organic opportunity.`;
+  } else {
+    prompt += ` Provide a generic premium welcome containing 3 elite, immediately actionable tactical SEO tips regarding regional Google SERPs, E-E-A-T markup, and content clusters.`;
+  }
+  
+  prompt += ` Ensure the HTML content is beautiful, formatted with clean modern CSS styles suitable for responsive viewing. No markdown symbols inside the final HTML string.`;
+
+  const response = await getAI().models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: EmailSchema,
+      temperature: 0.7,
+    }
+  });
+
+  let text = response.text;
+  if (!text) throw new Error("No response returned from Gemini.");
+  return JSON.parse(text);
+}
+
+export async function generateCheckoutEmail(email: string, planName: string, price: number, billingPeriod: string, businessName: string) {
+  const prompt = `
+  Write a premium receipt, invoice, and workspace onboarding welcome email from "SEO Cluster Mapping Suite" to "${email}".
+  
+  DETAILS:
+  - Plan Subscribed: ${planName}
+  - Price: $${price}/month
+  - Billing Term: ${billingPeriod === "yearly" ? "Billed Horizontally/Annually" : "Billed Monthly"}
+  - Client Entity Name: ${businessName}
+  - Status: COMPLIANT ACTIVE / SECURE CLUSTER ENGAGED
+  
+  Congratulations on launching their high-ingress workspace. Provide 3 highly tactical guidelines on launching their newly calculated cluster node links. Render a beautiful, professional styled border layout inside the HTML, complete with an invoice metadata box showing fake transaction reference ID SCS-491-032.
+  `;
+
+  const response = await getAI().models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: EmailSchema,
+      temperature: 0.7,
+    }
+  });
+
+  let text = response.text;
+  if (!text) throw new Error("No response returned from Gemini.");
+  return JSON.parse(text);
+}
+
